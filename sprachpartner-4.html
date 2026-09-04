@@ -3,87 +3,99 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sprachpartner — practice German with real people</title>
+<title>German Planet — Sprachpartner</title>
 <style>
   :root{
-    --ink:#1C2B33;
-    --paper:#F4F2ED;
-    --teal:#155852;
-    --teal-dark:#0E3C38;
-    --amber:#DD8B34;
-    --coral:#C6532E;
-    --line:#D8D2C4;
+    --bg:#F1F4F1;
+    --ink:#152420;
+    --green:#1F6F52;
+    --green-dark:#123D2C;
+    --gold:#DFA23A;
+    --sky:#3C6E96;
+    --coral:#C1543A;
+    --line:#D7DCD3;
     --card:#FFFFFF;
-    --radius-card: 10px;
-    --radius-pill: 999px;
+    --radius-card:10px;
+    --radius-pill:999px;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     min-height:100vh;
   }
-  #app{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
-  h1,h2,h3{font-family: Georgia, "Times New Roman", serif; font-weight:600; margin:0 0 6px 0;}
-  .topbar{ background:var(--teal-dark); color:#F4F2ED; padding:18px 20px 16px; position:sticky; top:0; z-index:5; }
-  .topbar .word{font-family:Georgia,serif; font-size:22px; letter-spacing:0.2px;}
-  .topbar .word em{font-style:normal;color:var(--amber);}
-  .topbar .sub{font-size:13px;opacity:0.75;margin-top:2px;}
+  #app{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;position:relative;}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:600;margin:0 0 6px 0;}
+  .topbar{background:var(--green-dark);color:#EFF4EF;padding:16px 20px 15px;position:sticky;top:0;z-index:5;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .planetmark{
+    width:30px;height:30px;border-radius:50%;flex:0 0 auto;
+    background:radial-gradient(circle at 32% 30%, #6EC79A 0%, var(--green) 45%, var(--sky) 100%);
+    box-shadow:inset -3px -3px 6px rgba(0,0,0,0.25);
+  }
+  .brand .names{line-height:1.15;}
+  .brand .names .main{font-family:Georgia,serif;font-size:19px;font-weight:700;letter-spacing:0.2px;}
+  .brand .names .sub{font-size:11px;color:#B9D6C6;letter-spacing:0.3px;}
+  .topbar .tagline{font-size:12.5px;opacity:0.8;margin-top:8px;}
   .topbar .row{display:flex;align-items:center;justify-content:space-between;}
-  .backbtn{background:none;border:none;color:#F4F2ED;font-size:15px;cursor:pointer;padding:4px 0;opacity:0.85;}
+  .backbtn{background:none;border:none;color:#EFF4EF;font-size:15px;cursor:pointer;padding:4px 0;opacity:0.85;}
   .content{padding:20px;flex:1;}
   .field{margin-bottom:14px;}
-  .field label{display:block;font-size:13px;color:#5b6a70;margin-bottom:6px;}
-  .field input, .field select{
-    width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:8px;
-    font-size:15px;background:#fff;color:var(--ink);
-  }
-  .field input:focus, .field select:focus{outline:2px solid var(--teal);outline-offset:1px;}
-  .btn{ display:inline-block;width:100%;padding:13px;border-radius:8px;border:none;
-    font-size:15px;font-weight:600;cursor:pointer;text-align:center; }
-  .btn-primary{background:var(--teal);color:#fff;}
-  .btn-primary:hover{background:var(--teal-dark);}
-  .btn-amber{background:var(--amber);color:#2b1c05;}
-  .btn-outline{background:transparent;color:var(--teal);border:1.5px solid var(--teal);}
+  .field label{display:block;font-size:13px;color:#5b6a63;margin-bottom:6px;}
+  .field input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:8px;font-size:15px;background:#fff;color:var(--ink);}
+  .field input:focus{outline:2px solid var(--green);outline-offset:1px;}
+  .btn{display:inline-block;width:100%;padding:13px;border-radius:8px;border:none;font-size:15px;font-weight:600;cursor:pointer;text-align:center;}
+  .btn-primary{background:var(--green);color:#fff;}
+  .btn-primary:hover{background:var(--green-dark);}
+  .btn-gold{background:var(--gold);color:#2b1c05;}
+  .btn-outline{background:transparent;color:var(--green);border:1.5px solid var(--green);}
   .btn-danger{background:var(--coral);color:#fff;}
   .btn[disabled]{opacity:0.5;cursor:default;}
   .stack > * + *{margin-top:10px;}
   .tabs{display:flex;gap:6px;margin-bottom:16px;}
-  .tabs button{flex:1;padding:9px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:14px;font-weight:600;color:#5b6a70;cursor:pointer;}
-  .tabs button.active{background:var(--teal);color:#fff;border-color:var(--teal);}
-  .hero{padding:6px 0 18px;}
-  .hero p{color:#4c5a60;font-size:14.5px;line-height:1.5;margin:6px 0 0;}
+  .tabs button{flex:1;padding:9px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:14px;font-weight:600;color:#5b6a63;cursor:pointer;}
+  .tabs button.active{background:var(--green);color:#fff;border-color:var(--green);}
+  .hero p{color:#46554c;font-size:14.5px;line-height:1.5;margin:6px 0 0;}
   .levelgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
   .levelcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-card);padding:14px;cursor:pointer;}
-  .levelcard .code{font-family:Georgia,serif;font-size:20px;color:var(--teal-dark);}
-  .levelcard .desc{font-size:12px;color:#6b7a80;margin-top:3px;}
-  .levelcard:active{background:#EFEAE0;}
+  .levelcard .code{font-family:Georgia,serif;font-size:20px;color:var(--green-dark);}
+  .levelcard .desc{font-size:12px;color:#6b7a72;margin-top:3px;}
+  .levelcard:active{background:#E9EFE7;}
   .modecard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-card);padding:16px;margin-top:12px;}
   .modecard h3{font-size:16px;}
-  .modecard p{font-size:13.5px;color:#5b6a70;margin:4px 0 12px;line-height:1.45;}
-  .pill{display:inline-block;padding:3px 10px;border-radius:var(--radius-pill);font-size:11.5px;background:#EAF1EF;color:var(--teal-dark);font-weight:600;}
+  .modecard p{font-size:13.5px;color:#5b6a63;margin:4px 0 12px;line-height:1.45;}
+  .pill{display:inline-block;padding:3px 10px;border-radius:var(--radius-pill);font-size:11.5px;background:#E5EFE7;color:var(--green-dark);font-weight:600;}
+  .pill-gold{background:#FBEDD2;color:#7A5209;}
   .waitbox{text-align:center;padding:36px 16px;background:var(--card);border:1px dashed var(--line);border-radius:var(--radius-card);}
-  .waitbox .dot{width:10px;height:10px;border-radius:50%;background:var(--amber);display:inline-block;animation:pulse 1.2s infinite ease-in-out; margin-right:6px;}
+  .waitbox .dot{width:10px;height:10px;border-radius:50%;background:var(--gold);display:inline-block;animation:pulse 1.2s infinite ease-in-out;margin-right:6px;}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.25;}}
-  .chatwrap{display:flex;flex-direction:column;height:calc(100vh - 64px);}
-  .callbar{background:var(--teal-dark);padding:10px 16px;display:flex;gap:8px;align-items:center;}
-  .callbar button{flex:1;padding:9px;border-radius:7px;border:none;font-size:13px;font-weight:600;cursor:pointer;}
-  .videos{display:flex;gap:8px;padding:10px 16px;background:var(--teal-dark);}
-  .videos video{width:50%;border-radius:8px;background:#000;aspect-ratio:4/3;object-fit:cover;}
+  .chatwrap{display:flex;flex-direction:column;height:calc(100vh - 62px);}
+  .callbar{background:var(--green-dark);padding:10px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .callbar button{flex:1;min-width:110px;padding:9px;border-radius:7px;border:none;font-size:13px;font-weight:600;cursor:pointer;}
+  .tilegrid{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px;background:var(--green-dark);}
+  .tile{position:relative;width:calc(50% - 4px);aspect-ratio:4/3;border-radius:8px;overflow:hidden;background:#0B241A;}
+  .tile video{width:100%;height:100%;object-fit:cover;display:block;}
+  .tile .avatar{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#0B241A;color:#EFF4EF;font-family:Georgia,serif;font-size:26px;}
+  .tile .label{position:absolute;left:6px;bottom:5px;background:rgba(0,0,0,0.5);color:#fff;font-size:10.5px;padding:2px 7px;border-radius:6px;}
   .messages{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
   .msg{max-width:78%;padding:9px 12px;border-radius:12px;font-size:14.5px;line-height:1.4;}
-  .msg.me{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:3px;}
+  .msg.me{align-self:flex-end;background:var(--green);color:#fff;border-bottom-right-radius:3px;}
   .msg.them{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:3px;}
   .msg .who{font-size:11px;opacity:0.65;margin-bottom:2px;}
-  .composer{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:var(--paper);}
+  .composer{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:var(--bg);align-items:center;}
   .composer input{flex:1;padding:11px 13px;border-radius:var(--radius-pill);border:1px solid var(--line);font-size:14.5px;}
-  .composer button{background:var(--teal);color:#fff;border:none;border-radius:var(--radius-pill);padding:0 18px;font-size:14px;font-weight:600;cursor:pointer;}
-  .note{font-size:12px;color:#7a8388;margin-top:16px;line-height:1.5;}
+  .composer button{background:var(--green);color:#fff;border:none;border-radius:var(--radius-pill);padding:0 18px;font-size:14px;font-weight:600;cursor:pointer;}
+  .topicbtn{background:var(--gold);color:#2b1c05;border:none;border-radius:var(--radius-pill);width:38px;height:38px;flex:0 0 auto;font-size:16px;cursor:pointer;}
+  .note{font-size:12px;color:#7a8378;margin-top:16px;line-height:1.5;}
   .err{background:#5C1F1A;color:#FBEAE7;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.5;margin-bottom:14px;}
-  .members{font-size:12.5px;color:#6b7a80;margin-top:8px;}
-  a.linklike{color:var(--teal);cursor:pointer;text-decoration:underline;}
+  a.linklike{color:var(--green);cursor:pointer;text-decoration:underline;}
+  .overlay{position:absolute;inset:0;background:rgba(15,25,20,0.6);display:flex;align-items:flex-end;z-index:20;}
+  .sheet{background:#fff;width:100%;border-radius:16px 16px 0 0;padding:20px;max-height:80vh;overflow-y:auto;}
+  .sheet .closebar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .sheet .closebar button{background:none;border:none;font-size:22px;color:#7a8378;cursor:pointer;line-height:1;}
+  .qlist{margin-top:12px;display:flex;flex-direction:column;gap:8px;}
+  .qlist .q{background:#F1F4F1;border-radius:8px;padding:10px 12px;font-size:14.5px;line-height:1.4;}
 </style>
 </head>
 <body>
@@ -113,6 +125,51 @@ const LEVELS = [
 ];
 const STUN = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
 
+const TOPICS = {
+  A1: [
+    {title:"Vorstellung (Introducing yourself)", questions:["Wie heißt du und woher kommst du?","Was ist dein Hobby?","Wie alt bist du?","Sprichst du noch andere Sprachen?"]},
+    {title:"Alltag (Daily routine)", questions:["Wann stehst du auf?","Was isst du zum Frühstück?","Wohin gehst du heute?","Was machst du am Abend?"]},
+    {title:"Familie (Family)", questions:["Hast du Geschwister?","Wie heißt deine Mutter?","Wo wohnt deine Familie?","Was macht dein Vater beruflich?"]},
+    {title:"Essen und Trinken (Food & drink)", questions:["Was isst du gern?","Magst du lieber Kaffee oder Tee?","Was ist dein Lieblingsessen?","Kochst du gern?"]},
+    {title:"Wetter (Weather)", questions:["Wie ist das Wetter heute?","Magst du Regen?","Was machst du bei Sonnenschein?","Welche Jahreszeit magst du am liebsten?"]},
+  ],
+  A2: [
+    {title:"Reisen (Travel)", questions:["Warst du schon im Ausland?","Wohin möchtest du gern reisen?","Fährst du gern mit dem Zug?","Was packst du immer in den Koffer?"]},
+    {title:"Freizeit (Free time)", questions:["Was machst du am Wochenende?","Treibst du Sport?","Liest du gern Bücher?","Gehst du oft ins Kino?"]},
+    {title:"Wohnen (Living)", questions:["Wo wohnst du?","Wohnst du allein oder mit Familie?","Wie sieht dein Zimmer aus?","Möchtest du eines Tages umziehen?"]},
+    {title:"Einkaufen (Shopping)", questions:["Wo kaufst du gern ein?","Kaufst du lieber online oder im Geschäft?","Was war dein letzter Einkauf?","Magst du Rabatte und Angebote?"]},
+    {title:"Gesundheit (Health)", questions:["Wie bleibst du gesund?","Machst du regelmäßig Sport?","Wie oft gehst du zum Arzt?","Was tust du bei Kopfschmerzen?"]},
+  ],
+  B1: [
+    {title:"Arbeit und Beruf (Work)", questions:["Was ist dein Traumberuf?","Arbeitest du lieber im Team oder allein?","Wie wichtig ist ein hohes Gehalt für dich?","Würdest du gern von zu Hause arbeiten?"]},
+    {title:"Umwelt (Environment)", questions:["Trennst du deinen Müll?","Wie kannst du im Alltag Energie sparen?","Was denkst du über Elektroautos?","Ist Umweltschutz wichtig für dich?"]},
+    {title:"Technologie (Technology)", questions:["Wie viele Stunden nutzt du täglich dein Handy?","Welche App benutzt du am meisten?","Sind soziale Medien für dich nützlich oder gefährlich?","Wie hat Technologie dein Leben verändert?"]},
+    {title:"Bildung (Education)", questions:["Was hast du studiert oder gelernt?","Was war dein Lieblingsfach in der Schule?","Lernst du lieber allein oder in einer Gruppe?","Ist Bildung in deinem Land teuer?"]},
+    {title:"Kultur und Traditionen (Culture)", questions:["Welche Feste feierst du?","Was ist eine typische Tradition in deinem Land?","Isst du gern Essen aus anderen Ländern?","Welche deutschen Traditionen kennst du?"]},
+  ],
+  B2: [
+    {title:"Gesellschaft (Society)", questions:["Wie hat sich die Gesellschaft in den letzten Jahren verändert?","Was denkst du über soziale Ungleichheit?","Welche Rolle spielt die Familie heute?","Ist Individualismus gut oder schlecht für eine Gesellschaft?"]},
+    {title:"Wirtschaft (Economy)", questions:["Wie beeinflusst Inflation dein Leben?","Was hältst du von der Vier-Tage-Woche?","Sollte der Staat mehr in Bildung investieren?","Wie wichtig ist finanzielle Unabhängigkeit für dich?"]},
+    {title:"Digitalisierung (Digitalization)", questions:["Verändert künstliche Intelligenz deinen Alltag?","Sollten Kinder früh mit Technologie in Kontakt kommen?","Was sind die größten Risiken der Digitalisierung?","Wie stellst du dir die Zukunft der Arbeit vor?"]},
+    {title:"Reisen und Globalisierung (Travel & globalization)", questions:["Verändert Reisen die eigene Perspektive?","Was denkst du über Massentourismus?","Wie beeinflusst Globalisierung lokale Kulturen?","Möchtest du eines Tages im Ausland leben?"]},
+    {title:"Medien (Media)", questions:["Vertraust du den Nachrichten?","Wie beeinflussen soziale Medien die öffentliche Meinung?","Solltest du weniger Zeit am Handy verbringen?","Was denkst du über Fake News?"]},
+  ],
+  C1: [
+    {title:"Politik und Zeitgeschehen (Politics)", questions:["Wie wichtig ist politisches Engagement für dich?","Welche globale Herausforderung besorgt dich am meisten?","Sollte Wählen eine Pflicht sein?","Wie beeinflusst Politik den Alltag der Bürger?"]},
+    {title:"Ethik und Philosophie (Ethics)", questions:["Gibt es eine objektive Moral?","Rechtfertigt der Zweck die Mittel?","Was bedeutet für dich ein gutes Leben?","Sollte man immer die Wahrheit sagen?"]},
+    {title:"Wissenschaft und Forschung (Science)", questions:["Sollte Gentechnik stärker reguliert werden?","Wie verändert KI die Wissenschaft?","Vertraust du wissenschaftlichen Studien?","Welche Erfindung hat die Welt am meisten verändert?"]},
+    {title:"Wirtschaftsethik (Business ethics)", questions:["Sollten Unternehmen mehr gesellschaftliche Verantwortung übernehmen?","Ist ein bedingungsloses Grundeinkommen sinnvoll?","Wie wichtig ist Nachhaltigkeit für Firmen?","Rechtfertigt Gewinn jedes Mittel?"]},
+    {title:"Sprache und Identität (Language & identity)", questions:["Verändert eine neue Sprache die eigene Identität?","Sollte man im Ausland die Landessprache lernen?","Wie wichtig ist Dialekt für die regionale Identität?","Geht durch Globalisierung sprachliche Vielfalt verloren?"]},
+  ],
+  C2: [
+    {title:"Philosophische Grundfragen (Philosophy)", questions:["Existiert der freie Wille?","Ist der Mensch von Natur aus gut oder egoistisch?","Kann man Glück überhaupt messen?","Was macht ein Leben sinnvoll?"]},
+    {title:"Globale Krisen (Global crises)", questions:["Ist internationale Zusammenarbeit angesichts nationaler Interessen realistisch?","Wie sollte die Welt mit Klimaflüchtlingen umgehen?","Welche Krise wird die Zukunft am meisten prägen?","Ist globale Gerechtigkeit überhaupt erreichbar?"]},
+    {title:"Kunst und Ästhetik (Art & aesthetics)", questions:["Kann Kunst ohne ihren Kontext bewertet werden?","Verliert Kunst durch Kommerzialisierung ihren Wert?","Ist Geschmack subjektiv oder erlernt?","Welche Rolle spielt Kunst in Krisenzeiten?"]},
+    {title:"Zukunft der Menschheit (Future of humanity)", questions:["Wird KI den Menschen irgendwann ersetzen?","Sollte Weltraumkolonisierung priorisiert werden?","Wie wird sich Arbeit in fünfzig Jahren verändert haben?","Ist Fortschritt immer etwas Positives?"]},
+    {title:"Sprache und Macht (Language & power)", questions:["Wie formt Sprache das Denken?","Warum ist es wichtig, wenn eine Sprache ausstirbt?","Wie beeinflusst Rhetorik politische Macht?","Verändert sich Wahrheit durch die Art, wie wir sie ausdrücken?"]},
+  ],
+};
+
 let state = {
   screen: "loading",
   uid: null, username: "", country: "",
@@ -125,6 +182,11 @@ function clearUnsubs(){ unsubs.forEach(u => { try{u();}catch(e){} }); unsubs = [
 let pc = null, localStream = null, remoteStream = null, callActive = false;
 let callUnsubs = [];
 function clearCallUnsubs(){ callUnsubs.forEach(u => { try{u();}catch(e){} }); callUnsubs = []; }
+
+/* group-call state */
+let groupLocalStream = null, groupCallActive = false, groupCallUnsub = null, groupHeartbeat = null;
+let groupPeers = {};       // uid -> { pc, unsubs:[] }
+let groupPeerNames = {};   // uid -> name (cached)
 
 const app = document.getElementById("app");
 function goto(screen){ state.screen = screen; render(); }
@@ -140,22 +202,30 @@ function render(){
   if(state.screen === "room") return renderRoom();
 }
 
-function renderLoading(){
-  app.innerHTML = `<div class="content"><p class="note">Loading…</p></div>`;
+function renderLoading(){ app.innerHTML = `<div class="content"><p class="note">Loading…</p></div>`; }
+
+function brandHeader(subLine){
+  return `
+    <div class="brand">
+      <div class="planetmark"></div>
+      <div class="names">
+        <div class="main">German Planet</div>
+        <div class="sub">SPRACHPARTNER</div>
+      </div>
+    </div>
+    ${subLine ? `<div class="tagline">${subLine}</div>` : ""}
+  `;
 }
 
 /* ---------- AUTH ---------- */
 function renderAuth(){
   const isSignup = state.authTab === "signup";
   app.innerHTML = `
-    <div class="topbar">
-      <div class="word">Sprach<em>partner</em></div>
-      <div class="sub">talk your way to fluency</div>
-    </div>
+    <div class="topbar">${brandHeader("talk your way to fluency")}</div>
     <div class="content">
       <div class="hero">
         <h2>Practice German with a real person</h2>
-        <p>Get paired with someone at your level — text, voice, or video, your choice.</p>
+        <p>Get paired with someone at your level — text, voice, or video, your choice. Part of the German Planet Grundkurs community.</p>
       </div>
       <div id="err-slot"></div>
       <div class="tabs">
@@ -192,7 +262,6 @@ function renderAuth(){
       } else {
         await auth.signInWithEmailAndPassword(email, pass);
       }
-      // onAuthStateChanged handles the rest
     }catch(e){
       errSlot.innerHTML = `<div class="err">${escapeHtml(friendlyAuthError(e))}</div>`;
     }
@@ -211,18 +280,18 @@ function friendlyAuthError(e){
 function renderLevels(){
   app.innerHTML = `
     <div class="topbar">
-      <div class="row">
-        <span class="sub">${escapeHtml(state.username)}${state.country ? " · " + escapeHtml(state.country) : ""}</span>
+      ${brandHeader()}
+      <div class="row" style="margin-top:10px;">
+        <span class="tagline">${escapeHtml(state.username)}${state.country ? " · " + escapeHtml(state.country) : ""}</span>
         <button class="backbtn" id="btn-logout">Log out</button>
       </div>
-      <div class="word" style="margin-top:6px;">Choose your level</div>
-      <div class="sub">CEFR A1 through C2</div>
     </div>
     <div class="content">
+      <h2>Choose your level</h2>
+      <p class="note" style="margin-top:0;">CEFR A1 through C2 — pick the level of your current German Planet Grundkurs chapter, or switch anytime.</p>
       <div class="levelgrid">
         ${LEVELS.map(l => `<div class="levelcard" data-code="${l.code}"><div class="code">${l.code}</div><div class="desc">${l.desc}</div></div>`).join("")}
       </div>
-      <div class="note">Not sure? Pick the level of your current course chapter — you can switch anytime.</div>
     </div>
   `;
   document.getElementById("btn-logout").onclick = async () => { await auth.signOut(); };
@@ -235,13 +304,14 @@ function renderLevels(){
 function renderMode(){
   app.innerHTML = `
     <div class="topbar">
-      <div class="row">
+      ${brandHeader()}
+      <div class="row" style="margin-top:10px;">
         <button class="backbtn" id="btn-back">&larr; Levels</button>
-        <span class="pill" style="background:#204F49;color:#F4F2ED;">${state.level}</span>
+        <span class="pill" style="background:#1F6F52;color:#fff;">${state.level}</span>
       </div>
-      <div class="word" style="margin-top:6px;">How do you want to practice?</div>
     </div>
     <div class="content">
+      <h2>How do you want to practice?</h2>
       <div class="modecard">
         <span class="pill">Quick match</span>
         <h3>Pair with someone now</h3>
@@ -249,9 +319,9 @@ function renderMode(){
         <button class="btn btn-primary" id="btn-match">Find a partner</button>
       </div>
       <div class="modecard">
-        <span class="pill">Group room</span>
+        <span class="pill pill-gold">Group room</span>
         <h3>${state.level} lounge</h3>
-        <p>An always-open text room for everyone practicing ${state.level} right now. Calls aren't available here yet — the lounge is text-only.</p>
+        <p>An always-open room for everyone practicing ${state.level} right now — text chat plus a group voice/video call, up to a handful of people at once.</p>
         <button class="btn btn-outline" id="btn-group">Enter the lounge</button>
       </div>
     </div>
@@ -294,26 +364,19 @@ async function enterQuickMatch(){
       tx.set(myMatchRef, {roomId, partnerUid: data.uid, ts: now});
       tx.delete(levelRef);
     });
-  }catch(e){
-    console.error(e);
-  }
+  }catch(e){ console.error(e); }
 
   waitHeartbeat = setInterval(async () => {
     try{
       const s = await levelRef.get();
-      if(s.exists && s.data().uid === state.uid){
-        await levelRef.update({ts: Date.now()});
-      }
+      if(s.exists && s.data().uid === state.uid) await levelRef.update({ts: Date.now()});
     }catch(e){}
   }, 20000);
 }
 
 async function enterMatchedRoom(roomId, partnerUid){
   clearInterval(waitHeartbeat);
-  state.roomKind = "match";
-  state.roomId = roomId;
-  state.partnerUid = partnerUid;
-  state.partnerName = "";
+  state.roomKind = "match"; state.roomId = roomId; state.partnerUid = partnerUid; state.partnerName = "";
   try{
     const s = await db.collection("users").doc(partnerUid).get();
     if(s.exists) state.partnerName = s.data().name || "";
@@ -326,9 +389,10 @@ function renderWaiting(){
   waitStartedAt = Date.now();
   app.innerHTML = `
     <div class="topbar">
-      <div class="row">
+      ${brandHeader()}
+      <div class="row" style="margin-top:10px;">
         <button class="backbtn" id="btn-cancel">&larr; Cancel</button>
-        <span class="pill" style="background:#204F49;color:#F4F2ED;">${state.level}</span>
+        <span class="pill" style="background:#1F6F52;color:#fff;">${state.level}</span>
       </div>
     </div>
     <div class="content">
@@ -354,31 +418,40 @@ function renderWaiting(){
   unsubs.push(() => clearInterval(t));
 }
 
-/* ---------- ROOM (chat + call) ---------- */
+/* ---------- ROOM (chat + call + topics) ---------- */
 function renderRoom(){
   const isGroup = state.roomKind === "group";
   app.innerHTML = `
     <div class="chatwrap">
-      <div class="topbar">
+      <div class="topbar" style="padding:12px 16px 12px;">
         <div class="row">
           <button class="backbtn" id="btn-leave">&larr; Leave</button>
-          <span class="pill" style="background:#204F49;color:#F4F2ED;">${state.level}${isGroup ? " lounge" : (state.partnerName ? " · " + escapeHtml(state.partnerName) : " · matched")}</span>
+          <span class="pill" style="background:#1F6F52;color:#fff;">${state.level}${isGroup ? " lounge" : (state.partnerName ? " · " + escapeHtml(state.partnerName) : " · matched")}</span>
         </div>
       </div>
-      ${isGroup ? "" : `
+      ${isGroup ? `
+      <div class="callbar">
+        <button class="btn-outline" id="btn-join-audio" style="background:#fff;">🎙️ Join voice</button>
+        <button class="btn-outline" id="btn-join-video" style="background:#fff;">🎥 Join video</button>
+        <button class="btn-danger" id="btn-leave-call" style="display:none;">Leave call</button>
+      </div>
+      <div class="tilegrid" id="tilegrid" style="display:none;"></div>
+      ` : `
       <div class="callbar">
         <button class="btn-outline" id="btn-audio" style="background:#fff;">🎙️ Voice call</button>
         <button class="btn-outline" id="btn-video" style="background:#fff;">🎥 Video call</button>
         <button class="btn-danger" id="btn-hangup" style="display:none;flex:0.6;">End</button>
       </div>
-      <div id="call-status" style="display:none;background:var(--teal-dark);color:#cfe3df;font-size:12px;padding:0 16px 8px;"></div>
-      <div class="videos" id="videowrap" style="display:none;">
-        <video id="vid-local" autoplay muted playsinline></video>
-        <video id="vid-remote" autoplay playsinline></video>
+      <div id="call-status" style="display:none;background:var(--green-dark);color:#cfe3df;font-size:12px;padding:0 16px 8px;"></div>
+      <div class="tilegrid" id="videowrap" style="display:none;">
+        <div class="tile"><video id="vid-local" autoplay muted playsinline></video></div>
+        <div class="tile"><video id="vid-remote" autoplay playsinline></video></div>
       </div>
-      <audio id="aud-remote" autoplay playsinline style="display:none;"></audio>`}
+      <audio id="aud-remote" autoplay playsinline style="display:none;"></audio>
+      `}
       <div class="messages" id="messages"></div>
       <div class="composer">
+        <button class="topicbtn" id="btn-topics" title="Conversation topics">💬</button>
         <input id="msg-input" placeholder="Schreib etwas auf Deutsch…" maxlength="500">
         <button id="btn-send">Send</button>
       </div>
@@ -386,16 +459,23 @@ function renderRoom(){
   `;
   document.getElementById("btn-leave").onclick = async () => {
     await teardownCall();
+    await leaveGroupCall();
     goto("mode");
   };
   document.getElementById("btn-send").onclick = sendMessage;
   document.getElementById("msg-input").addEventListener("keydown", e => { if(e.key === "Enter") sendMessage(); });
+  document.getElementById("btn-topics").onclick = () => openTopicSheet();
 
   if(!isGroup){
     document.getElementById("btn-audio").onclick = () => startCall(false);
     document.getElementById("btn-video").onclick = () => startCall(true);
     document.getElementById("btn-hangup").onclick = teardownCall;
     watchIncomingCall();
+  } else {
+    document.getElementById("btn-join-audio").onclick = () => joinGroupCall(false);
+    document.getElementById("btn-join-video").onclick = () => joinGroupCall(true);
+    document.getElementById("btn-leave-call").onclick = () => leaveGroupCall();
+    watchGroupCallMembership();
   }
 
   const msgsRef = db.collection("rooms").doc(state.roomId).collection("messages");
@@ -429,7 +509,42 @@ async function sendMessage(){
   }catch(e){ console.error(e); }
 }
 
-/* ---------- WebRTC call, signaled through Firestore realtime listeners ---------- */
+/* ---------- Conversation topics ---------- */
+let lastTopicIdx = -1;
+function openTopicSheet(){
+  const list = TOPICS[state.level] || [];
+  if(list.length === 0) return;
+  let idx = Math.floor(Math.random() * list.length);
+  if(list.length > 1 && idx === lastTopicIdx) idx = (idx + 1) % list.length;
+  lastTopicIdx = idx;
+  renderTopicSheet(list[idx]);
+}
+function renderTopicSheet(topic){
+  const existing = document.getElementById("topic-overlay");
+  if(existing) existing.remove();
+  const ov = document.createElement("div");
+  ov.className = "overlay";
+  ov.id = "topic-overlay";
+  ov.innerHTML = `
+    <div class="sheet">
+      <div class="closebar">
+        <span class="pill pill-gold">${state.level} topic</span>
+        <button id="topic-close">&times;</button>
+      </div>
+      <h3>${escapeHtml(topic.title)}</h3>
+      <div class="qlist">
+        ${topic.questions.map(q => `<div class="q">${escapeHtml(q)}</div>`).join("")}
+      </div>
+      <button class="btn btn-outline" id="topic-shuffle" style="margin-top:16px;">🔀 Another topic</button>
+    </div>
+  `;
+  app.appendChild(ov);
+  document.getElementById("topic-close").onclick = () => ov.remove();
+  ov.addEventListener("click", (e) => { if(e.target === ov) ov.remove(); });
+  document.getElementById("topic-shuffle").onclick = () => openTopicSheet();
+}
+
+/* ---------- 1:1 WebRTC call (Quick Match rooms) ---------- */
 function setCallStatus(text, showEnableBtn){
   const el = document.getElementById("call-status");
   if(!el) return;
@@ -450,7 +565,7 @@ function setCallStatus(text, showEnableBtn){
 async function startCall(withVideo){
   if(callActive || !state.partnerUid) return;
   callActive = true;
-  document.getElementById("videowrap").style.display = withVideo ? "flex" : "none";
+  document.getElementById("videowrap").style.display = "flex";
   document.getElementById("btn-hangup").style.display = "block";
   document.getElementById("btn-audio").disabled = true;
   document.getElementById("btn-video").disabled = true;
@@ -464,6 +579,7 @@ async function startCall(withVideo){
     return;
   }
   if(withVideo){ const lv = document.getElementById("vid-local"); if(lv){ lv.srcObject = localStream; lv.play().catch(()=>{}); } }
+  else { document.getElementById("vid-local").closest(".tile").style.display = "none"; }
 
   pc = new RTCPeerConnection(STUN);
   localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
@@ -472,14 +588,8 @@ async function startCall(withVideo){
     e.streams[0].getTracks().forEach(t => remoteStream.addTrack(t));
     const rv = document.getElementById("vid-remote");
     const ra = document.getElementById("aud-remote");
-    if(rv){
-      rv.srcObject = remoteStream;
-      rv.play().catch(() => setCallStatus("Connected — audio blocked by browser", true));
-    }
-    if(ra){
-      ra.srcObject = remoteStream;
-      ra.play().catch(() => setCallStatus("Connected — audio blocked by browser", true));
-    }
+    if(rv){ rv.srcObject = remoteStream; rv.play().catch(() => setCallStatus("Connected — audio blocked by browser", true)); }
+    if(ra){ ra.srcObject = remoteStream; ra.play().catch(() => setCallStatus("Connected — audio blocked by browser", true)); }
   };
   pc.oniceconnectionstatechange = () => {
     if(!pc) return;
@@ -566,10 +676,173 @@ function watchIncomingCall(){
   unsubs.push(unsub);
 }
 
+/* ---------- Group calls (lounge, mesh of peer connections, N participants) ---------- */
+function pairKey(a, b){ return [a, b].sort().join("__"); }
+
+function renderTileGrid(){
+  const grid = document.getElementById("tilegrid");
+  if(!grid) return;
+  grid.style.display = groupCallActive ? "flex" : "none";
+  document.getElementById("btn-leave-call").style.display = groupCallActive ? "block" : "none";
+  document.getElementById("btn-join-audio").style.display = groupCallActive ? "none" : "block";
+  document.getElementById("btn-join-video").style.display = groupCallActive ? "none" : "block";
+}
+
+function upsertTile(uid, opts){
+  const grid = document.getElementById("tilegrid");
+  if(!grid) return;
+  let tile = document.getElementById("tile-" + uid);
+  const label = opts.label !== undefined ? opts.label : (groupPeerNames[uid] || "…");
+  if(!tile){
+    tile = document.createElement("div");
+    tile.className = "tile";
+    tile.id = "tile-" + uid;
+    grid.appendChild(tile);
+  }
+  if(opts.stream && opts.hasVideo){
+    tile.innerHTML = `<video autoplay playsinline ${opts.muted ? "muted" : ""}></video><div class="label">${escapeHtml(label)}</div>`;
+    const v = tile.querySelector("video");
+    v.srcObject = opts.stream;
+    v.play().catch(()=>{});
+  } else {
+    const initial = (label || "?").trim().charAt(0).toUpperCase() || "?";
+    tile.innerHTML = `<div class="avatar">${escapeHtml(initial)}</div><div class="label">${escapeHtml(label)}${opts.stream ? "" : " (audio)"}</div>`;
+    if(opts.stream){
+      const a = document.createElement("audio");
+      a.autoplay = true; a.playsInline = true; a.style.display = "none";
+      a.srcObject = opts.stream;
+      tile.appendChild(a);
+      a.play().catch(()=>{});
+    }
+  }
+}
+function removeTile(uid){
+  const t = document.getElementById("tile-" + uid);
+  if(t) t.remove();
+}
+
+async function joinGroupCall(withVideo){
+  if(groupCallActive) return;
+  try{
+    groupLocalStream = await navigator.mediaDevices.getUserMedia({audio:true, video:withVideo});
+  }catch(e){
+    alert("Couldn't access microphone/camera. Check browser permissions.");
+    return;
+  }
+  groupCallActive = true;
+  renderTileGrid();
+  upsertTile(state.uid, {stream: groupLocalStream, hasVideo: withVideo, muted: true, label: "You"});
+
+  const membersRef = db.collection("rooms").doc(state.roomId).collection("callMembers");
+  await membersRef.doc(state.uid).set({name: state.username, hasVideo: withVideo, ts: Date.now()});
+
+  groupCallUnsub = membersRef.onSnapshot((snap) => {
+    const currentUids = new Set();
+    snap.forEach(d => { if(d.id !== state.uid){ currentUids.add(d.id); groupPeerNames[d.id] = d.data().name || "Learner"; } });
+    currentUids.forEach(uid => { if(!groupPeers[uid]) connectToGroupPeer(uid); });
+    Object.keys(groupPeers).forEach(uid => { if(!currentUids.has(uid)) disconnectGroupPeer(uid); });
+  });
+
+  groupHeartbeat = setInterval(() => {
+    membersRef.doc(state.uid).update({ts: Date.now()}).catch(()=>{});
+  }, 15000);
+}
+
+async function connectToGroupPeer(peerUid){
+  groupPeers[peerUid] = { pc: null, unsubs: [] };
+  const gpc = new RTCPeerConnection(STUN);
+  groupPeers[peerUid].pc = gpc;
+  groupLocalStream.getTracks().forEach(t => gpc.addTrack(t, groupLocalStream));
+  const remote = new MediaStream();
+  let sawVideo = false;
+  gpc.ontrack = (e) => {
+    if(e.track.kind === "video") sawVideo = true;
+    e.streams[0].getTracks().forEach(t => remote.addTrack(t));
+    upsertTile(peerUid, {stream: remote, hasVideo: sawVideo, label: groupPeerNames[peerUid] || "Learner"});
+  };
+
+  const pkey = pairKey(state.uid, peerUid);
+  const pairRef = db.collection("rooms").doc(state.roomId).collection("calls").doc(pkey);
+  const myCandRef = pairRef.collection("candidates").doc(state.uid);
+  const theirCandRef = pairRef.collection("candidates").doc(peerUid);
+  await myCandRef.set({list: []});
+
+  gpc.onicecandidate = async (e) => {
+    if(e.candidate){
+      try{
+        const s = await myCandRef.get();
+        const list = (s.exists && s.data().list) || [];
+        list.push(e.candidate.toJSON());
+        await myCandRef.set({list});
+      }catch(err){}
+    }
+  };
+  let added = 0;
+  const unsubCand = theirCandRef.onSnapshot(async (snap) => {
+    if(!snap.exists) return;
+    const list = snap.data().list || [];
+    for(let i = added; i < list.length; i++){
+      try{ await gpc.addIceCandidate(new RTCIceCandidate(list[i])); }catch(e){}
+    }
+    added = list.length;
+  });
+  groupPeers[peerUid].unsubs.push(unsubCand);
+
+  if(state.uid < peerUid){
+    const offer = await gpc.createOffer();
+    await gpc.setLocalDescription(offer);
+    await pairRef.set({offer, answer: null});
+    const unsubAns = pairRef.onSnapshot(async (snap) => {
+      if(snap.exists && snap.data().answer && gpc.signalingState === "have-local-offer"){
+        await gpc.setRemoteDescription(new RTCSessionDescription(snap.data().answer));
+      }
+    });
+    groupPeers[peerUid].unsubs.push(unsubAns);
+  } else {
+    const unsubOffer = pairRef.onSnapshot(async (snap) => {
+      if(snap.exists && snap.data().offer && gpc.signalingState === "stable" && !gpc.currentRemoteDescription){
+        await gpc.setRemoteDescription(new RTCSessionDescription(snap.data().offer));
+        const answer = await gpc.createAnswer();
+        await gpc.setLocalDescription(answer);
+        await pairRef.update({answer});
+      }
+    });
+    groupPeers[peerUid].unsubs.push(unsubOffer);
+  }
+}
+
+function disconnectGroupPeer(uid){
+  const p = groupPeers[uid];
+  if(!p) return;
+  p.unsubs.forEach(u => { try{u();}catch(e){} });
+  if(p.pc){ try{ p.pc.close(); }catch(e){} }
+  delete groupPeers[uid];
+  removeTile(uid);
+}
+
+async function leaveGroupCall(){
+  if(!groupCallActive) return;
+  clearInterval(groupHeartbeat); groupHeartbeat = null;
+  if(groupCallUnsub){ groupCallUnsub(); groupCallUnsub = null; }
+  Object.keys(groupPeers).forEach(uid => disconnectGroupPeer(uid));
+  removeTile(state.uid);
+  if(groupLocalStream){ groupLocalStream.getTracks().forEach(t => t.stop()); groupLocalStream = null; }
+  if(state.roomId){
+    try{ await db.collection("rooms").doc(state.roomId).collection("callMembers").doc(state.uid).delete(); }catch(e){}
+  }
+  groupCallActive = false;
+  renderTileGrid();
+}
+
+function watchGroupCallMembership(){
+  // if this room already has active callers when we arrive, show a hint but don't auto-join (mic/cam needs a tap)
+}
+
 /* ---------- boot: auth state drives everything ---------- */
 auth.onAuthStateChanged(async (user) => {
   clearUnsubs();
   await teardownCall();
+  await leaveGroupCall();
   if(user){
     state.uid = user.uid;
     try{
