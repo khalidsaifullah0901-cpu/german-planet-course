@@ -371,10 +371,12 @@ function renderRoom(){
         <button class="btn-outline" id="btn-video" style="background:#fff;">🎥 Video call</button>
         <button class="btn-danger" id="btn-hangup" style="display:none;flex:0.6;">End</button>
       </div>
+      <div id="call-status" style="display:none;background:var(--teal-dark);color:#cfe3df;font-size:12px;padding:0 16px 8px;"></div>
       <div class="videos" id="videowrap" style="display:none;">
         <video id="vid-local" autoplay muted playsinline></video>
         <video id="vid-remote" autoplay playsinline></video>
-      </div>`}
+      </div>
+      <audio id="aud-remote" autoplay playsinline style="display:none;"></audio>`}
       <div class="messages" id="messages"></div>
       <div class="composer">
         <input id="msg-input" placeholder="Schreib etwas auf Deutsch…" maxlength="500">
@@ -428,6 +430,23 @@ async function sendMessage(){
 }
 
 /* ---------- WebRTC call, signaled through Firestore realtime listeners ---------- */
+function setCallStatus(text, showEnableBtn){
+  const el = document.getElementById("call-status");
+  if(!el) return;
+  if(!text){ el.style.display = "none"; el.innerHTML = ""; return; }
+  el.style.display = "block";
+  el.innerHTML = escapeHtml(text) + (showEnableBtn ? ` <a class="linklike" id="btn-enable-sound" style="color:#fff;">tap to enable sound</a>` : "");
+  if(showEnableBtn){
+    document.getElementById("btn-enable-sound").onclick = () => {
+      const rv = document.getElementById("vid-remote");
+      const ra = document.getElementById("aud-remote");
+      if(rv) rv.play().catch(()=>{});
+      if(ra) ra.play().catch(()=>{});
+      setCallStatus("Connected");
+    };
+  }
+}
+
 async function startCall(withVideo){
   if(callActive || !state.partnerUid) return;
   callActive = true;
@@ -435,6 +454,7 @@ async function startCall(withVideo){
   document.getElementById("btn-hangup").style.display = "block";
   document.getElementById("btn-audio").disabled = true;
   document.getElementById("btn-video").disabled = true;
+  setCallStatus("Requesting microphone" + (withVideo ? "/camera" : "") + "…");
 
   try{
     localStream = await navigator.mediaDevices.getUserMedia({audio:true, video:withVideo});
@@ -443,14 +463,31 @@ async function startCall(withVideo){
     await teardownCall();
     return;
   }
-  if(withVideo){ const lv = document.getElementById("vid-local"); if(lv) lv.srcObject = localStream; }
+  if(withVideo){ const lv = document.getElementById("vid-local"); if(lv){ lv.srcObject = localStream; lv.play().catch(()=>{}); } }
 
   pc = new RTCPeerConnection(STUN);
   localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
   remoteStream = new MediaStream();
   pc.ontrack = (e) => {
     e.streams[0].getTracks().forEach(t => remoteStream.addTrack(t));
-    const rv = document.getElementById("vid-remote"); if(rv) rv.srcObject = remoteStream;
+    const rv = document.getElementById("vid-remote");
+    const ra = document.getElementById("aud-remote");
+    if(rv){
+      rv.srcObject = remoteStream;
+      rv.play().catch(() => setCallStatus("Connected — audio blocked by browser", true));
+    }
+    if(ra){
+      ra.srcObject = remoteStream;
+      ra.play().catch(() => setCallStatus("Connected — audio blocked by browser", true));
+    }
+  };
+  pc.oniceconnectionstatechange = () => {
+    if(!pc) return;
+    const s = pc.iceConnectionState;
+    if(s === "checking") setCallStatus("Connecting…");
+    else if(s === "connected" || s === "completed") setCallStatus("Connected");
+    else if(s === "failed") setCallStatus("Connection failed — network may be blocking the call. Try a different wifi/network.");
+    else if(s === "disconnected") setCallStatus("Connection lost, retrying…");
   };
 
   const offerRef = db.collection("rooms").doc(state.roomId).collection("signal").doc("offer");
@@ -502,6 +539,7 @@ async function startCall(withVideo){
 
 async function teardownCall(){
   clearCallUnsubs();
+  setCallStatus("");
   if(pc){ try{ pc.close(); }catch(e){} pc = null; }
   if(localStream){ localStream.getTracks().forEach(t => t.stop()); localStream = null; }
   remoteStream = null;
