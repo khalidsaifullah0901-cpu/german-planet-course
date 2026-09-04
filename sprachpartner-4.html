@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sprachpartner — practice German with real people</title>
+<style>
+  :root{
+    --ink:#1C2B33;
+    --paper:#F4F2ED;
+    --teal:#155852;
+    --teal-dark:#0E3C38;
+    --amber:#DD8B34;
+    --coral:#C6532E;
+    --line:#D8D2C4;
+    --card:#FFFFFF;
+    --radius-card: 10px;
+    --radius-pill: 999px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height:100vh;
+  }
+  #app{max-width:520px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
+  h1,h2,h3{font-family: Georgia, "Times New Roman", serif; font-weight:600; margin:0 0 6px 0;}
+  .topbar{ background:var(--teal-dark); color:#F4F2ED; padding:18px 20px 16px; position:sticky; top:0; z-index:5; }
+  .topbar .word{font-family:Georgia,serif; font-size:22px; letter-spacing:0.2px;}
+  .topbar .word em{font-style:normal;color:var(--amber);}
+  .topbar .sub{font-size:13px;opacity:0.75;margin-top:2px;}
+  .topbar .row{display:flex;align-items:center;justify-content:space-between;}
+  .backbtn{background:none;border:none;color:#F4F2ED;font-size:15px;cursor:pointer;padding:4px 0;opacity:0.85;}
+  .content{padding:20px;flex:1;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:13px;color:#5b6a70;margin-bottom:6px;}
+  .field input, .field select{
+    width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:8px;
+    font-size:15px;background:#fff;color:var(--ink);
+  }
+  .field input:focus, .field select:focus{outline:2px solid var(--teal);outline-offset:1px;}
+  .btn{ display:inline-block;width:100%;padding:13px;border-radius:8px;border:none;
+    font-size:15px;font-weight:600;cursor:pointer;text-align:center; }
+  .btn-primary{background:var(--teal);color:#fff;}
+  .btn-primary:hover{background:var(--teal-dark);}
+  .btn-amber{background:var(--amber);color:#2b1c05;}
+  .btn-outline{background:transparent;color:var(--teal);border:1.5px solid var(--teal);}
+  .btn-danger{background:var(--coral);color:#fff;}
+  .btn[disabled]{opacity:0.5;cursor:default;}
+  .stack > * + *{margin-top:10px;}
+  .tabs{display:flex;gap:6px;margin-bottom:16px;}
+  .tabs button{flex:1;padding:9px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:14px;font-weight:600;color:#5b6a70;cursor:pointer;}
+  .tabs button.active{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .hero{padding:6px 0 18px;}
+  .hero p{color:#4c5a60;font-size:14.5px;line-height:1.5;margin:6px 0 0;}
+  .levelgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+  .levelcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-card);padding:14px;cursor:pointer;}
+  .levelcard .code{font-family:Georgia,serif;font-size:20px;color:var(--teal-dark);}
+  .levelcard .desc{font-size:12px;color:#6b7a80;margin-top:3px;}
+  .levelcard:active{background:#EFEAE0;}
+  .modecard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-card);padding:16px;margin-top:12px;}
+  .modecard h3{font-size:16px;}
+  .modecard p{font-size:13.5px;color:#5b6a70;margin:4px 0 12px;line-height:1.45;}
+  .pill{display:inline-block;padding:3px 10px;border-radius:var(--radius-pill);font-size:11.5px;background:#EAF1EF;color:var(--teal-dark);font-weight:600;}
+  .waitbox{text-align:center;padding:36px 16px;background:var(--card);border:1px dashed var(--line);border-radius:var(--radius-card);}
+  .waitbox .dot{width:10px;height:10px;border-radius:50%;background:var(--amber);display:inline-block;animation:pulse 1.2s infinite ease-in-out; margin-right:6px;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.25;}}
+  .chatwrap{display:flex;flex-direction:column;height:calc(100vh - 64px);}
+  .callbar{background:var(--teal-dark);padding:10px 16px;display:flex;gap:8px;align-items:center;}
+  .callbar button{flex:1;padding:9px;border-radius:7px;border:none;font-size:13px;font-weight:600;cursor:pointer;}
+  .videos{display:flex;gap:8px;padding:10px 16px;background:var(--teal-dark);}
+  .videos video{width:50%;border-radius:8px;background:#000;aspect-ratio:4/3;object-fit:cover;}
+  .messages{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+  .msg{max-width:78%;padding:9px 12px;border-radius:12px;font-size:14.5px;line-height:1.4;}
+  .msg.me{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:3px;}
+  .msg.them{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:3px;}
+  .msg .who{font-size:11px;opacity:0.65;margin-bottom:2px;}
+  .composer{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:var(--paper);}
+  .composer input{flex:1;padding:11px 13px;border-radius:var(--radius-pill);border:1px solid var(--line);font-size:14.5px;}
+  .composer button{background:var(--teal);color:#fff;border:none;border-radius:var(--radius-pill);padding:0 18px;font-size:14px;font-weight:600;cursor:pointer;}
+  .note{font-size:12px;color:#7a8388;margin-top:16px;line-height:1.5;}
+  .err{background:#5C1F1A;color:#FBEAE7;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.5;margin-bottom:14px;}
+  .members{font-size:12.5px;color:#6b7a80;margin-top:8px;}
+  a.linklike{color:var(--teal);cursor:pointer;text-decoration:underline;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+/* ====== YOUR FIREBASE CONFIG ====== */
+const firebaseConfig = {
+  apiKey: "AIzaSyAyqxrTlg_mvGcV9SYTiXdVhXPFjXp_B_A",
+  authDomain: "sprachpartner-ead2a.firebaseapp.com",
+  projectId: "sprachpartner-ead2a",
+  storageBucket: "sprachpartner-ead2a.firebasestorage.app",
+  messagingSenderId: "211703430394",
+  appId: "1:211703430394:web:196da49867cee7b9b81d43"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+const LEVELS = [
+  {code:"A1", desc:"Beginner"}, {code:"A2", desc:"Elementary"},
+  {code:"B1", desc:"Intermediate"}, {code:"B2", desc:"Upper-Int."},
+  {code:"C1", desc:"Advanced"}, {code:"C2", desc:"Mastery"},
+];
+const STUN = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+
+let state = {
+  screen: "loading",
+  uid: null, username: "", country: "",
+  level: "A1", roomId: null, roomKind: null, partnerUid: null, partnerName: "",
+  authTab: "login",
+};
+let unsubs = [];
+function clearUnsubs(){ unsubs.forEach(u => { try{u();}catch(e){} }); unsubs = []; }
+
+let pc = null, localStream = null, remoteStream = null, callActive = false;
+let callUnsubs = [];
+function clearCallUnsubs(){ callUnsubs.forEach(u => { try{u();}catch(e){} }); callUnsubs = []; }
+
+const app = document.getElementById("app");
+function goto(screen){ state.screen = screen; render(); }
+function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+function render(){
+  clearUnsubs();
+  if(state.screen === "loading") return renderLoading();
+  if(state.screen === "auth") return renderAuth();
+  if(state.screen === "levels") return renderLevels();
+  if(state.screen === "mode") return renderMode();
+  if(state.screen === "waiting") return renderWaiting();
+  if(state.screen === "room") return renderRoom();
+}
+
+function renderLoading(){
+  app.innerHTML = `<div class="content"><p class="note">Loading…</p></div>`;
+}
+
+/* ---------- AUTH ---------- */
+function renderAuth(){
+  const isSignup = state.authTab === "signup";
+  app.innerHTML = `
+    <div class="topbar">
+      <div class="word">Sprach<em>partner</em></div>
+      <div class="sub">talk your way to fluency</div>
+    </div>
+    <div class="content">
+      <div class="hero">
+        <h2>Practice German with a real person</h2>
+        <p>Get paired with someone at your level — text, voice, or video, your choice.</p>
+      </div>
+      <div id="err-slot"></div>
+      <div class="tabs">
+        <button id="tab-login" class="${!isSignup ? "active" : ""}">Log in</button>
+        <button id="tab-signup" class="${isSignup ? "active" : ""}">Sign up</button>
+      </div>
+      <div class="stack">
+        ${isSignup ? `
+        <div class="field"><label>Your name</label><input id="in-name" maxlength="24" placeholder="e.g. Rafiq"></div>
+        <div class="field"><label>Country (optional)</label><input id="in-country" maxlength="24" placeholder="e.g. Bangladesh"></div>
+        ` : ``}
+        <div class="field"><label>Email</label><input id="in-email" type="email" placeholder="you@example.com"></div>
+        <div class="field"><label>Password</label><input id="in-pass" type="password" placeholder="At least 6 characters"></div>
+        <button class="btn btn-primary" id="btn-submit">${isSignup ? "Create account" : "Log in"}</button>
+      </div>
+    </div>
+  `;
+  document.getElementById("tab-login").onclick = () => { state.authTab = "login"; renderAuth(); };
+  document.getElementById("tab-signup").onclick = () => { state.authTab = "signup"; renderAuth(); };
+  document.getElementById("btn-submit").onclick = async () => {
+    const email = document.getElementById("in-email").value.trim();
+    const pass = document.getElementById("in-pass").value;
+    const errSlot = document.getElementById("err-slot");
+    errSlot.innerHTML = "";
+    if(!email || !pass){ errSlot.innerHTML = `<div class="err">Enter an email and password.</div>`; return; }
+    try{
+      if(isSignup){
+        const name = document.getElementById("in-name").value.trim();
+        const country = document.getElementById("in-country").value.trim();
+        if(!name){ errSlot.innerHTML = `<div class="err">Enter your name.</div>`; return; }
+        const cred = await auth.createUserWithEmailAndPassword(email, pass);
+        await cred.user.updateProfile({displayName: name});
+        await db.collection("users").doc(cred.user.uid).set({name, country, createdAt: Date.now()});
+      } else {
+        await auth.signInWithEmailAndPassword(email, pass);
+      }
+      // onAuthStateChanged handles the rest
+    }catch(e){
+      errSlot.innerHTML = `<div class="err">${escapeHtml(friendlyAuthError(e))}</div>`;
+    }
+  };
+}
+function friendlyAuthError(e){
+  const c = e && e.code || "";
+  if(c.includes("email-already-in-use")) return "That email already has an account — try logging in instead.";
+  if(c.includes("weak-password")) return "Password needs to be at least 6 characters.";
+  if(c.includes("invalid-email")) return "That doesn't look like a valid email.";
+  if(c.includes("user-not-found") || c.includes("wrong-password") || c.includes("invalid-credential")) return "Email or password is incorrect.";
+  return e && e.message ? e.message : "Something went wrong — try again.";
+}
+
+/* ---------- LEVEL SELECT ---------- */
+function renderLevels(){
+  app.innerHTML = `
+    <div class="topbar">
+      <div class="row">
+        <span class="sub">${escapeHtml(state.username)}${state.country ? " · " + escapeHtml(state.country) : ""}</span>
+        <button class="backbtn" id="btn-logout">Log out</button>
+      </div>
+      <div class="word" style="margin-top:6px;">Choose your level</div>
+      <div class="sub">CEFR A1 through C2</div>
+    </div>
+    <div class="content">
+      <div class="levelgrid">
+        ${LEVELS.map(l => `<div class="levelcard" data-code="${l.code}"><div class="code">${l.code}</div><div class="desc">${l.desc}</div></div>`).join("")}
+      </div>
+      <div class="note">Not sure? Pick the level of your current course chapter — you can switch anytime.</div>
+    </div>
+  `;
+  document.getElementById("btn-logout").onclick = async () => { await auth.signOut(); };
+  document.querySelectorAll(".levelcard").forEach(el => {
+    el.onclick = () => { state.level = el.dataset.code; goto("mode"); };
+  });
+}
+
+/* ---------- MODE SELECT ---------- */
+function renderMode(){
+  app.innerHTML = `
+    <div class="topbar">
+      <div class="row">
+        <button class="backbtn" id="btn-back">&larr; Levels</button>
+        <span class="pill" style="background:#204F49;color:#F4F2ED;">${state.level}</span>
+      </div>
+      <div class="word" style="margin-top:6px;">How do you want to practice?</div>
+    </div>
+    <div class="content">
+      <div class="modecard">
+        <span class="pill">Quick match</span>
+        <h3>Pair with someone now</h3>
+        <p>You're matched with the next available ${state.level} learner. Private room, text chat, and voice/video calls.</p>
+        <button class="btn btn-primary" id="btn-match">Find a partner</button>
+      </div>
+      <div class="modecard">
+        <span class="pill">Group room</span>
+        <h3>${state.level} lounge</h3>
+        <p>An always-open text room for everyone practicing ${state.level} right now. Calls aren't available here yet — the lounge is text-only.</p>
+        <button class="btn btn-outline" id="btn-group">Enter the lounge</button>
+      </div>
+    </div>
+  `;
+  document.getElementById("btn-back").onclick = () => goto("levels");
+  document.getElementById("btn-match").onclick = () => enterQuickMatch();
+  document.getElementById("btn-group").onclick = () => {
+    state.roomKind = "group"; state.roomId = "group-" + state.level; state.partnerUid = null; state.partnerName = "";
+    goto("room");
+  };
+}
+
+/* ---------- QUICK MATCH (atomic via Firestore transaction) ---------- */
+let waitHeartbeat = null;
+async function enterQuickMatch(){
+  goto("waiting");
+  const levelRef = db.collection("queue").doc(state.level);
+  const myMatchRef = db.collection("matches").doc(state.uid);
+  await myMatchRef.delete().catch(()=>{});
+
+  const unsub = myMatchRef.onSnapshot((snap) => {
+    if(snap.exists && snap.data().roomId && state.screen === "waiting"){
+      enterMatchedRoom(snap.data().roomId, snap.data().partnerUid);
+    }
+  });
+  unsubs.push(unsub);
+
+  try{
+    await db.runTransaction(async (tx) => {
+      const snap = await tx.get(levelRef);
+      const now = Date.now();
+      const data = snap.exists ? snap.data() : null;
+      const stale = data && (now - data.ts > 45000);
+      if(!data || stale || data.uid === state.uid){
+        tx.set(levelRef, {uid: state.uid, name: state.username, ts: now});
+        return;
+      }
+      const roomId = "match-" + state.level + "-" + now;
+      tx.set(db.collection("matches").doc(data.uid), {roomId, partnerUid: state.uid, ts: now});
+      tx.set(myMatchRef, {roomId, partnerUid: data.uid, ts: now});
+      tx.delete(levelRef);
+    });
+  }catch(e){
+    console.error(e);
+  }
+
+  waitHeartbeat = setInterval(async () => {
+    try{
+      const s = await levelRef.get();
+      if(s.exists && s.data().uid === state.uid){
+        await levelRef.update({ts: Date.now()});
+      }
+    }catch(e){}
+  }, 20000);
+}
+
+async function enterMatchedRoom(roomId, partnerUid){
+  clearInterval(waitHeartbeat);
+  state.roomKind = "match";
+  state.roomId = roomId;
+  state.partnerUid = partnerUid;
+  state.partnerName = "";
+  try{
+    const s = await db.collection("users").doc(partnerUid).get();
+    if(s.exists) state.partnerName = s.data().name || "";
+  }catch(e){}
+  goto("room");
+}
+
+let waitStartedAt = 0;
+function renderWaiting(){
+  waitStartedAt = Date.now();
+  app.innerHTML = `
+    <div class="topbar">
+      <div class="row">
+        <button class="backbtn" id="btn-cancel">&larr; Cancel</button>
+        <span class="pill" style="background:#204F49;color:#F4F2ED;">${state.level}</span>
+      </div>
+    </div>
+    <div class="content">
+      <div class="waitbox">
+        <div><span class="dot"></span>Looking for a ${state.level} partner&hellip;</div>
+        <div class="note" style="margin-top:14px;">Keep this open. You'll drop into a private room the instant someone else joins for ${state.level}.</div>
+        <div class="note" id="wait-elapsed" style="margin-top:8px;"></div>
+      </div>
+    </div>
+  `;
+  document.getElementById("btn-cancel").onclick = async () => {
+    clearInterval(waitHeartbeat);
+    clearUnsubs();
+    const levelRef = db.collection("queue").doc(state.level);
+    try{
+      const s = await levelRef.get();
+      if(s.exists && s.data().uid === state.uid) await levelRef.delete();
+    }catch(e){}
+    goto("mode");
+  };
+  const el = document.getElementById("wait-elapsed");
+  const t = setInterval(() => { if(el) el.textContent = "waited " + Math.floor((Date.now()-waitStartedAt)/1000) + "s"; }, 1000);
+  unsubs.push(() => clearInterval(t));
+}
+
+/* ---------- ROOM (chat + call) ---------- */
+function renderRoom(){
+  const isGroup = state.roomKind === "group";
+  app.innerHTML = `
+    <div class="chatwrap">
+      <div class="topbar">
+        <div class="row">
+          <button class="backbtn" id="btn-leave">&larr; Leave</button>
+          <span class="pill" style="background:#204F49;color:#F4F2ED;">${state.level}${isGroup ? " lounge" : (state.partnerName ? " · " + escapeHtml(state.partnerName) : " · matched")}</span>
+        </div>
+      </div>
+      ${isGroup ? "" : `
+      <div class="callbar">
+        <button class="btn-outline" id="btn-audio" style="background:#fff;">🎙️ Voice call</button>
+        <button class="btn-outline" id="btn-video" style="background:#fff;">🎥 Video call</button>
+        <button class="btn-danger" id="btn-hangup" style="display:none;flex:0.6;">End</button>
+      </div>
+      <div class="videos" id="videowrap" style="display:none;">
+        <video id="vid-local" autoplay muted playsinline></video>
+        <video id="vid-remote" autoplay playsinline></video>
+      </div>`}
+      <div class="messages" id="messages"></div>
+      <div class="composer">
+        <input id="msg-input" placeholder="Schreib etwas auf Deutsch…" maxlength="500">
+        <button id="btn-send">Send</button>
+      </div>
+    </div>
+  `;
+  document.getElementById("btn-leave").onclick = async () => {
+    await teardownCall();
+    goto("mode");
+  };
+  document.getElementById("btn-send").onclick = sendMessage;
+  document.getElementById("msg-input").addEventListener("keydown", e => { if(e.key === "Enter") sendMessage(); });
+
+  if(!isGroup){
+    document.getElementById("btn-audio").onclick = () => startCall(false);
+    document.getElementById("btn-video").onclick = () => startCall(true);
+    document.getElementById("btn-hangup").onclick = teardownCall;
+    watchIncomingCall();
+  }
+
+  const msgsRef = db.collection("rooms").doc(state.roomId).collection("messages");
+  const q = msgsRef.orderBy("ts", "asc").limitToLast(150);
+  const unsub = q.onSnapshot((snap) => {
+    const box = document.getElementById("messages");
+    if(!box) return;
+    if(snap.empty){ box.innerHTML = `<div class="note">No messages yet — say hallo!</div>`; return; }
+    box.innerHTML = snap.docs.map(d => {
+      const m = d.data();
+      const mine = m.uid === state.uid;
+      return `<div class="msg ${mine ? "me" : "them"}">
+        ${mine ? "" : `<div class="who">${escapeHtml(m.name || "")}</div>`}
+        ${escapeHtml(m.text || "")}
+      </div>`;
+    }).join("");
+    box.scrollTop = box.scrollHeight;
+  });
+  unsubs.push(unsub);
+}
+
+async function sendMessage(){
+  const input = document.getElementById("msg-input");
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = "";
+  try{
+    await db.collection("rooms").doc(state.roomId).collection("messages").add({
+      uid: state.uid, name: state.username, text, ts: Date.now()
+    });
+  }catch(e){ console.error(e); }
+}
+
+/* ---------- WebRTC call, signaled through Firestore realtime listeners ---------- */
+async function startCall(withVideo){
+  if(callActive || !state.partnerUid) return;
+  callActive = true;
+  document.getElementById("videowrap").style.display = withVideo ? "flex" : "none";
+  document.getElementById("btn-hangup").style.display = "block";
+  document.getElementById("btn-audio").disabled = true;
+  document.getElementById("btn-video").disabled = true;
+
+  try{
+    localStream = await navigator.mediaDevices.getUserMedia({audio:true, video:withVideo});
+  }catch(e){
+    alert("Couldn't access microphone/camera. Check browser permissions.");
+    await teardownCall();
+    return;
+  }
+  if(withVideo){ const lv = document.getElementById("vid-local"); if(lv) lv.srcObject = localStream; }
+
+  pc = new RTCPeerConnection(STUN);
+  localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+  remoteStream = new MediaStream();
+  pc.ontrack = (e) => {
+    e.streams[0].getTracks().forEach(t => remoteStream.addTrack(t));
+    const rv = document.getElementById("vid-remote"); if(rv) rv.srcObject = remoteStream;
+  };
+
+  const offerRef = db.collection("rooms").doc(state.roomId).collection("signal").doc("offer");
+  const answerRef = db.collection("rooms").doc(state.roomId).collection("signal").doc("answer");
+  const myCandRef = db.collection("rooms").doc(state.roomId).collection("signal").doc("cand_" + state.uid);
+  const theirCandRef = db.collection("rooms").doc(state.roomId).collection("signal").doc("cand_" + state.partnerUid);
+  await myCandRef.set({list: []});
+
+  pc.onicecandidate = async (e) => {
+    if(e.candidate){
+      try{
+        const s = await myCandRef.get();
+        const list = (s.exists && s.data().list) || [];
+        list.push(e.candidate.toJSON());
+        await myCandRef.set({list});
+      }catch(err){}
+    }
+  };
+
+  const existingOffer = await offerRef.get();
+  if(!existingOffer.exists){
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    await offerRef.set({sdp: offer, from: state.uid, video: withVideo});
+    const unsubAns = answerRef.onSnapshot(async (snap) => {
+      if(snap.exists && snap.data().sdp && pc && pc.signalingState === "have-local-offer"){
+        await pc.setRemoteDescription(new RTCSessionDescription(snap.data().sdp));
+      }
+    });
+    callUnsubs.push(unsubAns);
+  } else {
+    await pc.setRemoteDescription(new RTCSessionDescription(existingOffer.data().sdp));
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+    await answerRef.set({sdp: answer, from: state.uid});
+  }
+
+  let addedCandidates = 0;
+  const unsubCand = theirCandRef.onSnapshot(async (snap) => {
+    if(!snap.exists || !pc) return;
+    const list = snap.data().list || [];
+    for(let i = addedCandidates; i < list.length; i++){
+      try{ await pc.addIceCandidate(new RTCIceCandidate(list[i])); }catch(e){}
+    }
+    addedCandidates = list.length;
+  });
+  callUnsubs.push(unsubCand);
+}
+
+async function teardownCall(){
+  clearCallUnsubs();
+  if(pc){ try{ pc.close(); }catch(e){} pc = null; }
+  if(localStream){ localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+  remoteStream = null;
+  callActive = false;
+  if(state.roomId && state.roomKind === "match"){
+    try{
+      await db.collection("rooms").doc(state.roomId).collection("signal").doc("offer").delete();
+      await db.collection("rooms").doc(state.roomId).collection("signal").doc("answer").delete();
+    }catch(e){}
+  }
+  const vw = document.getElementById("videowrap"); if(vw) vw.style.display = "none";
+  const hb = document.getElementById("btn-hangup"); if(hb) hb.style.display = "none";
+  const ba = document.getElementById("btn-audio"); if(ba) ba.disabled = false;
+  const bv = document.getElementById("btn-video"); if(bv) bv.disabled = false;
+}
+
+function watchIncomingCall(){
+  const offerRef = db.collection("rooms").doc(state.roomId).collection("signal").doc("offer");
+  const unsub = offerRef.onSnapshot((snap) => {
+    if(callActive || !snap.exists) return;
+    const data = snap.data();
+    if(data.from !== state.uid){ startCall(!!data.video); }
+  });
+  unsubs.push(unsub);
+}
+
+/* ---------- boot: auth state drives everything ---------- */
+auth.onAuthStateChanged(async (user) => {
+  clearUnsubs();
+  await teardownCall();
+  if(user){
+    state.uid = user.uid;
+    try{
+      const s = await db.collection("users").doc(user.uid).get();
+      if(s.exists){ state.username = s.data().name || user.email; state.country = s.data().country || ""; }
+      else { state.username = user.displayName || user.email; state.country = ""; }
+    }catch(e){ state.username = user.displayName || user.email; }
+    goto("levels");
+  } else {
+    state.uid = null; state.username = ""; state.country = "";
+    goto("auth");
+  }
+});
+</script>
+</body>
+</html>
